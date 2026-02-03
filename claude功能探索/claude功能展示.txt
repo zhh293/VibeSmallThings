@@ -1,0 +1,522 @@
+claude code三种模式
+
+默认模式会在执行的每一步询问你是否同意
+
+自动模式则是不断自己推进，不询问我们的意见
+
+
+还有一种规划模式，这种模式不会主动在你电脑上做事情，而是只和你聊天，询问你的需求，意图等等，特别适合做项目前，或者重构项目前使用这种模式
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+同时，在claude完成我提出的一个项目前，貌似调用了某种工具帮我扩展了我的想法同时征求了我的意见
+
+
+
+
+> 在Demo1文件夹下面创建一个办公软件，使用html，css，js来制作
+
+● 我需要了解一下您想要的办公软件具体包含哪些功能。
+  ⎿ Tool use rejected with user message: The user wants to clarify these questions.
+        This means they may have additional information, context or questions for you.
+        Take their response into account and then reformulate the questions if appropriate.
+        Start by asking them what they would like to clarify.
+
+        Questions asked:
+    - "您希望这个办公软件包含哪些功能？"
+      Answer: 电子表格, 待办事项, 综合办公套件, 文档编辑器
+
+
+● 好的，我将为您创建一个综合办公套件，包含文档编辑器、电子表格和待办事项功能。
+
+
+
+
+
+
+
+
+
+
+
+
+规划模式的效果是什么呢，我给大家展示一波
+
+
+
+
+
+
+
+
+
+> 我想要把这个应用重构为React+Typescript+Vite的项目（这是我提的要求）
+
+● 我来帮您将这个办公套件重构为 React + TypeScript + Vite 项目。首先让我探索现有的代码结构
+
+● Explore(探索办公套件代码结构)
+  ⎿  Done (8 tool uses · 36.8k tokens · 1m 19s)
+
+● 现在我对现有代码有了全面的了解。让我启动Plan代理来设计React + TypeScript +
+  Vite的重构方案。
+
+● Plan(设计React重构方案)
+  ⎿  Done (8 tool uses · 37.4k tokens · 2m 46s)
+
+● 我已经完成了详细的分析和设计。现在让我将最终计划写入计划文件。
+
+● Updated plan
+  ⎿  /plan to preview
+
+● 计划已完成。以下是重构方案的核心要点：
+
+  技术栈: Vite + React 18 + TypeScript + Zustand + TipTap
+
+  8个实施阶段:
+  1. 项目初始化和依赖安装
+  2. 类型定义与 Zustand 状态管理
+  3. 通用组件与自定义 Hooks
+  4. 仪表盘模块
+  5. 待办事项模块
+  6. 文档编辑器模块 (集成 TipTap 富文本)
+  7. 电子表格模块 (公式引擎迁移)
+  8. 集成测试与优化
+
+  关键决策:
+  - 使用 TipTap 替代已废弃的 document.execCommand
+  - 使用 Zustand 的 persist 中间件实现 localStorage 持久化
+  - 保持 localStorage 键名不变，确保数据兼容
+  - 使用 CSS Modules 保持现有设计风格
+
+● User approved Claude's plan
+  ⎿  Plan saved to: ~\.claude\plans\adaptive-kindling-cascade.md · /plan to edit
+     办公套件重构计划: HTML/CSS/JS -> React + TypeScript + Vite
+
+     项目概述
+
+     将 E:/claudeproject/Demo1 下的办公套件从纯 HTML/CSS/JS 重构为现代 React +
+     TypeScript + Vite 项目。
+
+     技术栈选择
+     ┌──────────┬────────────────────────┬─────────────────────────────┐
+     │   类别   │          技术          │            理由             │
+     ├──────────┼────────────────────────┼─────────────────────────────┤
+     │ 构建工具 │ Vite 5.x               │ 快速 HMR，原生 TS 支持      │
+     ├──────────┼────────────────────────┼─────────────────────────────┤
+     │ 框架     │ React 18               │ 并发特性，生态丰富          │
+     ├──────────┼────────────────────────┼─────────────────────────────┤
+     │ 语言     │ TypeScript 5.x         │ 类型安全                    │
+     ├──────────┼────────────────────────┼─────────────────────────────┤
+     │ 状态管理 │ Zustand                │ 轻量，TS 友好，内置 persist │
+     ├──────────┼────────────────────────┼─────────────────────────────┤
+     │ 路由     │ React Router v6        │ 可选，支持深链接            │
+     ├──────────┼────────────────────────┼─────────────────────────────┤
+     │ 样式     │ CSS Modules + CSS 变量 │ 保持现有设计语言            │
+     ├──────────┼────────────────────────┼─────────────────────────────┤
+     │ 富文本   │ TipTap                 │ 替代废弃的 execCommand      │
+     └──────────┴────────────────────────┴─────────────────────────────┘
+     项目结构
+
+     E:/claudeproject/Demo1/
+     ├── index.html
+     ├── vite.config.ts
+     ├── tsconfig.json
+     ├── package.json
+     └── src/
+         ├── main.tsx
+         ├── App.tsx
+         ├── types/
+         │   ├── document.ts
+         │   ├── spreadsheet.ts
+         │   └── todo.ts
+         ├── stores/
+         │   ├── useDocumentStore.ts
+         │   ├── useSpreadsheetStore.ts
+         │   ├── useTodoStore.ts
+         │   └── useAppStore.ts
+         ├── hooks/
+         │   ├── useAutoSave.ts
+         │   ├── useKeyboardShortcuts.ts
+         │   ├── useNotification.ts
+         │   └── useBeforeUnload.ts
+         ├── utils/
+         │   ├── formula.ts
+         │   ├── csv.ts
+         │   ├── date.ts
+         │   └── migration.ts
+         ├── components/
+         │   ├── common/
+         │   │   ├── Notification/
+         │   │   ├── Toolbar/
+         │   │   └── Button/
+         │   ├── layout/
+         │   │   ├── AppLayout.tsx
+         │   │   └── Sidebar.tsx
+         │   ├── dashboard/
+         │   │   ├── Dashboard.tsx
+         │   │   └── StatCard.tsx
+         │   ├── document/
+         │   │   ├── DocumentEditor.tsx
+         │   │   ├── Editor.tsx (TipTap)
+         │   │   ├── EditorToolbar.tsx
+         │   │   └── DocumentList.tsx
+         │   ├── spreadsheet/
+         │   │   ├── SpreadsheetEditor.tsx
+         │   │   ├── Grid.tsx
+         │   │   ├── Cell.tsx
+         │   │   ├── FormulaBar.tsx
+         │   │   └── SheetList.tsx
+         │   └── todo/
+         │       ├── TodoApp.tsx
+         │       ├── TodoInput.tsx
+         │       ├── TodoList.tsx
+         │       ├── TodoItem.tsx
+         │       └── TodoFilters.tsx
+         └── styles/
+             ├── global.css
+             └── variables.css
+
+     实施步骤
+
+     阶段 1: 项目初始化
+
+     1. 备份现有 Demo1 文件夹
+     2. 在 Demo1 目录初始化 Vite + React + TS 项目
+     3. 安装依赖: zustand, react-router-dom, @tiptap/react, @tiptap/starter-kit
+     4. 配置路径别名 @/ -> src/
+     5. 迁移 CSS 变量到 src/styles/variables.css
+
+     阶段 2: 类型定义与状态管理
+
+     1. 创建 TypeScript 接口 (Document, Sheet, Task)
+     2. 实现 Zustand stores，使用 persist 中间件
+     3. 保持 localStorage 键名兼容: office_documents, office_sheets, office_todos
+     4. 编写数据迁移函数处理旧格式
+
+     阶段 3: 通用组件与 Hooks
+
+     1. 布局组件: AppLayout, Sidebar
+     2. 通知系统: Notification 组件 + useNotification hook
+     3. 自定义 hooks: useAutoSave, useKeyboardShortcuts, useBeforeUnload
+
+     阶段 4: 仪表盘模块
+
+     1. Dashboard 组件
+     2. StatCard 统计卡片
+     3. 快速访问卡片
+
+     阶段 5: 待办事项模块
+
+     1. TodoApp 主容器
+     2. TodoInput 输入区 (文本 + 优先级 + 日期)
+     3. TodoList + TodoItem 列表
+     4. TodoFilters 过滤器
+     5. 日期格式化与逾期检测
+
+     阶段 6: 文档编辑器模块
+
+     1. 集成 TipTap 编辑器
+     2. EditorToolbar 工具栏 (粗体/斜体/下划线/对齐/列表/字体/颜色)
+     3. DocumentList 文档列表
+     4. HTML 导出功能
+
+     阶段 7: 电子表格模块
+
+     1. Grid 表格网格 (动态行列)
+     2. Cell 单元格组件 (使用 React.memo 优化)
+     3. 迁移公式引擎到 utils/formula.ts
+     4. FormulaBar 公式栏
+     5. 键盘导航 (方向键/Tab/Enter)
+     6. CSV 导出
+     7. 行列增删功能
+
+     阶段 8: 集成与测试
+
+     1. 路由配置或模块状态切换
+     2. 全局键盘快捷键 (Ctrl+S, Ctrl+N, Alt+数字)
+     3. 自动保存 (30秒间隔)
+     4. 响应式布局调试
+     5. 功能完整性测试
+
+     关键文件参考
+     新文件: src/utils/formula.ts
+     参考原文件: js/spreadsheet.js
+     迁移内容: evaluateFormula, getRangeValues, getColumnName
+     ────────────────────────────────────────
+     新文件: src/stores/useTodoStore.ts
+     参考原文件: js/todo.js
+     迁移内容: 任务 CRUD, 过滤逻辑
+     ────────────────────────────────────────
+     新文件: src/stores/useDocumentStore.ts
+     参考原文件: js/document-editor.js
+     迁移内容: 文档 CRUD, 自动保存
+     ────────────────────────────────────────
+     新文件: src/hooks/useKeyboardShortcuts.ts
+     参考原文件: js/app.js
+     迁移内容: 全局快捷键处理
+     ────────────────────────────────────────
+     新文件: src/styles/variables.css
+     参考原文件: css/style.css
+     迁移内容: CSS 变量定义
+     数据兼容性
+
+     - localStorage 键名保持不变
+     - Zustand persist 格式: { state: { ... }, version: 0 }
+     - 启动时检测并迁移旧数组格式到新格式
+
+     验证方法
+
+     1. 启动开发服务器: npm run dev
+     2. 功能测试清单:
+       - 仪表盘显示正确统计数据
+       - 文档编辑器: 新建/保存/删除/导出
+       - 富文本格式: 粗体/斜体/下划线/对齐
+       - 电子表格: 单元格编辑/公式计算 (=SUM, =AVG)
+       - 键盘导航: 方向键/Tab 移动
+       - CSV 导出正确
+       - 待办事项: 添加/完成/删除/过滤
+       - 自动保存 (等待30秒后刷新验证)
+       - 快捷键: Ctrl+S, Ctrl+N, Alt+1/2/3/4
+       - 响应式: 窗口缩小后侧边栏折叠
+     3. 数据迁移测试: 在有旧数据的浏览器中打开，验证数据正常加载
+     4. 构建测试: npm run build 无错误
+
+
+
+
+
+
+
+ctrl+g可以在vscode中编辑提示词，非常方便
+
+
+
+
+cursor内部内置了很多工具，基本已经够日常开发使用了
+
+
+
+执行终端命令claude一定是需要询问用户的，除非你手动执行
+
+claude --dangerously-skip-permissions
+但是这是一把双刃剑，尽量不要使用
+
+
+
+ctrl+b可以让项目在后台运行，不阻塞当前claude命令行命令，同时这样子做可以边改边看效果，嘻嘻嘻
+
+
+claude也支持回滚
+
+
+
+/rewind，支持四种选项，回滚代码和会话，回滚代码，回滚会话，什么都不做
+
+
+随心所欲地回滚
+
+
+但是其实有点小坑，他只能回滚自己写入的那些文件，通过终端执行的那些无法自己回滚
+
+
+
+
+
+figma可以设计前端页面原型
+
+如果在终端传送图片给Claude，ctrl+v就行
+
+Figma提供了一个非常好的MCP SERVER，如果嫌图片上传这种方式不准确，那就是用这个MCP server
+
+方法如下
+
+安装MCP，首先执行claude mcp add --transport http figma https://mcp.figma.com/mcp
+
+
+安装成功之后重启claude，同时使用/resume找到想要的历史对话，/mcp找到现在的mcp工具有哪些
+
+如果有授权的话就自动授权，授权完毕之后就可以使用mcp工具了
+
+
+给自己的需求，帮我修改页面，使它与figma稿件保持一致，然后把你的稿件链接粘贴上去
+
+
+一路同意就可以
+
+
+
+
+
+上下文压缩 /compact可以压缩上下文，后面也可以提你的压缩需求
+
+压缩完成之后可以使用ctrl+o查看压缩后的上下文
+
+
+
+
+/clear则会清空上下文，如果后续的任务跟上下文无关的话就可以使用
+
+
+
+
+那有没有办法让claude code在我们进入这个会话就知道我们的项目信息，用户的需求等重要资料呢，即每次启动claude都自动读取某些我们想要他必须知道的信息和资料
+
+
+
+使用CLAUDE.md则可以轻松的做到
+
+/init来让claude自己创建一份，让后让他再转换成中文
+
+
+然后我们先退出claude，再claude -c重新进入会话，这时他会自动读取md文件
+
+
+如何打开claude.md
+
+
+/memory，勾选即可
+
+
+Hook功能，在模型工具运行前后添加一些自定义逻辑，claude提供的比较多
+
+/hooks
+
+PreToolUse 工具使用前执行
+PostToolUse 工具使用后
+PostToolUseFailure 在工具执行失败之后
+Notification 通知送达的时候执行
+UserPromptSubmit  当用户提交提示词的时候执行
+
+
+
+这里的工具指的范围很多，像什么文件操纵工具，网络搜索工具等等
+
+
+然后会让你填写TOOL MATCHER，你就把你想控制的工具写在上面就可以
+
+
+然后在command里面填写你想添加的逻辑（命令行命令，这命令不会太局限了吗，能实现的功能感觉有点难啊，我操了）
+
+
+
+
+最后选择这个Hook生效的范围
+
+1. Project settings (local) → .claude/settings.local.json
+生效范围：仅在你本地的这个项目生效，不会被 Git 提交（通常 .local 文件会被 .gitignore 忽略）。
+适合场景：个人调试、本地专属的配置，比如你自己测试这个 hook，不希望影响团队其他成员。
+对应图中标注：对本机本项目生效
+2. Project settings → .claude/settings.json
+生效范围：对整个项目生效，会被 Git 提交到代码仓库，团队所有成员都能同步到这个配置。
+适合场景：团队协作项目，需要让所有人都遵循相同的代码格式化规则。
+对应图中标注：对本项目生效
+3. User settings → ~/.claude/settings.json
+生效范围：对当前用户的所有 Claude Code 项目全局生效。
+适合场景：你个人所有项目都需要自动格式化代码，希望一次配置、所有项目都生效。
+
+
+
+
+
+
+
+Agent Skills
+
+
+
+我总感觉它和claude.md有点太像了，所以我上网搜寻到的资料告诉我他们之间的区别
+
+
+
+
+
+什么是Agent Skills
+
+就是大模型可以随时翻阅的说明文档
+
+是 SystemPrompt 但也不是，Skill 这里的参考文档是动态加载，用到就加载，用不到不加载
+
+
+就比如说我针对不同的场景写了一堆预制提示词，比如我现在有三个项目，我为每个项目根据当前状况创建一个skill，里面描述项目的主体，技术栈，进展，迭代的程度，有哪些bug需要注意等等，到时候我在这三个项目中随意切换，也不用每次把任务前提什么的都重新复制给它了。他看到这个项目之后会自动去skill中查找看有没有对应的，跟这个项目有关的提示词的，然后直接动态加载。是这个意思，牛逼。。。。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+subAgent
+
+
+独立的一个子Agent
+
+/agent创建新的agent
+
+可以对一个任务进行人为的拆分，交给多个智能体一起开始干，效率杠杠的
+
+
+
+测试任务并发执行结果， 发现以下有意思的启发：
+Claude Code 的任务工具允许用户并行执行多个任务，这对于探索大型代码库或执行独立的子任务非常有用。
+subagent是 Claude Code 的轻量级实例，可以在任务内部运行，每个agent都有自己的上下文窗口。
+看起来并行级别上限为 10，但用户可以要求 Claude Code 运行更多任务，它只会将它们排队。
+提供并行度级别后，Claude Code 将以批量方式并行执行任务。它会等到当前批次中的所有任务完成后再开始下一个批次。在 Claude Code 任务工具的当前实现中，似乎没有办法在保持任务高效执行的同时控制并行度级别。我的建议是，除非您需要限制任务执行速度，否则不要指定并行度级别，让 Claude Code 决定并行运行的任务数量。
+
+
+
+
+
+
+Plugin
+
+
+/plugin进入插件管理器
+
+
+Discover是发现的插件，Intalled是已安装的插件，MarketPlaces是插件市场
+
+
+
+挑选插件安装，安装完之后选定作用范围即可
+
+
+重启claude，新建一个项目，然后找到我们刚才安装的Plugin
+
+如果有的话，那就开始测试吧，让它使用这个插件干你想要做的事情，
+
+
+Plugin的体量是不一样的，有的Plugin可能只有一个Skill文件，像前端设计插件，只需要语言描述就能发挥作用，所以只需要一个Skill
+
+
+但是有的则比较庞大，Skill，MCP，Hooks这些他都有，这就因人而异了，看着选择自己最喜欢的就可以。。。。。

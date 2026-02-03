@@ -1,0 +1,283 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Dark Theme - Primary Colors */
+  --bg-primary: #0a0a0b;
+  --bg-secondary: #141415;
+  --bg-tertiary: #1a1a1c;
+
+  /* Gradients */
+  --gradient-aurora: linear-gradient(135deg,
+    rgba(99, 102, 241, 0.15),
+    rgba(168, 85, 247, 0.15),
+    rgba(236, 72, 153, 0.1)
+  );
+  --gradient-accent: linear-gradient(135deg, #6366f1, #8b5cf6, #d946ef);
+
+  /* Accent Colors */
+  --accent-primary: #8b5cf6;
+  --accent-secondary: #6366f1;
+  --accent-success: #10b981;
+  --accent-warning: #f59e0b;
+  --accent-danger: #ef4444;
+
+  /* Text */
+  --text-primary: #fafafa;
+  --text-secondary: #a1a1aa;
+  --text-muted: #52525b;
+
+  /* Borders and Glow */
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-hover: rgba(255, 255, 255, 0.1);
+  --glow-purple: 0 0 20px rgba(139, 92, 246, 0.3);
+  --glow-blue: 0 0 20px rgba(99, 102, 241, 0.3);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-hover);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Glass Card Base */
+@layer components {
+  .glass-card {
+    @apply bg-dark-card/70 backdrop-blur-xl border border-white/[0.06] rounded-2xl;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+
+  .glass-card-hover {
+    @apply transition-all duration-200;
+  }
+
+  .glass-card-hover:hover {
+    @apply border-white/10;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(139, 92, 246, 0.1);
+  }
+
+  .glow-text {
+    @apply bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent;
+  }
+
+  .btn-primary {
+    @apply px-4 py-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500
+           rounded-lg font-medium text-white transition-all duration-200
+           hover:shadow-glow-purple active:scale-[0.98];
+  }
+
+  .btn-secondary {
+    @apply px-4 py-2 bg-dark-hover border border-white/10 rounded-lg font-medium
+           text-white/80 transition-all duration-200
+           hover:bg-white/10 hover:text-white active:scale-[0.98];
+  }
+
+  .input-glass {
+    @apply w-full px-4 py-3 bg-dark-card/50 border border-white/10 rounded-xl
+           text-white placeholder-white/40 outline-none transition-all duration-200
+           focus:border-accent-primary/50 focus:shadow-glow-purple/20;
+  }
+}
+
+/* Aurora Animation */
+@keyframes aurora {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  25% {
+    transform: translate(2%, 2%) scale(1.02);
+  }
+  50% {
+    transform: translate(-1%, 3%) scale(1.01);
+  }
+  75% {
+    transform: translate(1%, -2%) scale(1.03);
+  }
+}
+
+/* Fade In Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Slide In from Right */
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Slide Out to Right */
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+/* Pulse Glow */
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(139, 92, 246, 0.4);
+  }
+}
+
+/* Checkbox Styling */
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border-hover);
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+input[type="checkbox"]:hover {
+  border-color: var(--accent-primary);
+}
+
+input[type="checkbox"]:checked {
+  background: var(--gradient-accent);
+  border-color: transparent;
+}
+
+input[type="checkbox"]:checked::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* Selection */
+::selection {
+  background-color: rgba(139, 92, 246, 0.3);
+  color: white;
+}
+
+/* Focus Visible */
+:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
+/* TipTap Editor Styles */
+.ProseMirror {
+  @apply outline-none min-h-[300px] p-4;
+}
+
+.ProseMirror p {
+  @apply mb-3;
+}
+
+.ProseMirror h1 {
+  @apply text-3xl font-bold mb-4;
+}
+
+.ProseMirror h2 {
+  @apply text-2xl font-semibold mb-3;
+}
+
+.ProseMirror h3 {
+  @apply text-xl font-semibold mb-2;
+}
+
+.ProseMirror ul, .ProseMirror ol {
+  @apply pl-6 mb-3;
+}
+
+.ProseMirror ul {
+  @apply list-disc;
+}
+
+.ProseMirror ol {
+  @apply list-decimal;
+}
+
+.ProseMirror li {
+  @apply mb-1;
+}
+
+.ProseMirror blockquote {
+  @apply border-l-4 border-accent-primary/50 pl-4 italic text-white/70;
+}
+
+.ProseMirror code {
+  @apply bg-dark-hover px-1.5 py-0.5 rounded text-sm font-mono text-accent-primary;
+}
+
+.ProseMirror pre {
+  @apply bg-dark-hover p-4 rounded-lg mb-3 overflow-x-auto;
+}
+
+.ProseMirror pre code {
+  @apply bg-transparent p-0;
+}
+
+.ProseMirror a {
+  @apply text-accent-primary underline;
+}
+
+.ProseMirror hr {
+  @apply border-white/10 my-6;
+}

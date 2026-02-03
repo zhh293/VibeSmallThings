@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deep Space Awakening - 深空觉醒</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 主页面 -->
+    <div id="homepage" class="homepage">
+        <div class="ambient-glow"></div>
+
+        <div class="content-wrapper">
+            <div class="logo-section">
+                <div class="quantum-ring"></div>
+                <h1 class="main-title">
+                    <span class="title-line">DEEP</span>
+                    <span class="title-line">SPACE</span>
+                </h1>
+                <div class="subtitle">探索未知宇宙的边界</div>
+            </div>
+
+            <button id="enterBtn" class="enter-button">
+                <span class="btn-text">启动量子门</span>
+                <span class="btn-glow"></span>
+                <div class="particles-trail"></div>
+            </button>
+
+            <div class="info-bar">
+                <div class="info-item">
+                    <span class="info-label">坐标</span>
+                    <span class="info-value" id="coordinates">41°24'12.2"N 2°10'26.5"E</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">状态</span>
+                    <span class="info-value status-ready">就绪</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">能量</span>
+                    <span class="info-value">100%</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">控制模式</span>
+                    <span class="info-value">手部追踪</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="scan-line"></div>
+    </div>
+
+    <!-- 3D 粒子星空画布 -->
+    <canvas id="starfield" class="starfield-canvas"></canvas>
+
+    <!-- 过渡效果遮罩 -->
+    <div id="transition" class="transition-overlay"></div>
+
+    <!-- MediaPipe 手部追踪库 -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+
+    <!-- 摄像头视频元素 -->
+    <video id="video" class="camera-video" autoplay playsinline></video>
+    <canvas id="canvas" class="camera-canvas"></canvas>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

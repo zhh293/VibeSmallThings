@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>办公套件 - Office Suite</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 侧边导航栏 -->
+        <nav class="sidebar">
+            <div class="logo">
+                <h2>Office Suite</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item active" data-module="dashboard">
+                    <span class="icon">🏠</span>
+                    <span>仪表盘</span>
+                </li>
+                <li class="nav-item" data-module="document">
+                    <span class="icon">📄</span>
+                    <span>文档编辑器</span>
+                </li>
+                <li class="nav-item" data-module="spreadsheet">
+                    <span class="icon">📊</span>
+                    <span>电子表格</span>
+                </li>
+                <li class="nav-item" data-module="todo">
+                    <span class="icon">✅</span>
+                    <span>待办事项</span>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- 主内容区 -->
+        <main class="main-content">
+            <!-- 仪表盘 -->
+            <section id="dashboard" class="module active">
+                <div class="module-header">
+                    <h1>欢迎使用办公套件</h1>
+                </div>
+                <div class="dashboard-grid">
+                    <div class="dashboard-card" data-target="document">
+                        <div class="card-icon">📄</div>
+                        <h3>文档编辑器</h3>
+                        <p>创建和编辑富文本文档</p>
+                    </div>
+                    <div class="dashboard-card" data-target="spreadsheet">
+                        <div class="card-icon">📊</div>
+                        <h3>电子表格</h3>
+                        <p>数据处理和计算</p>
+                    </div>
+                    <div class="dashboard-card" data-target="todo">
+                        <div class="card-icon">✅</div>
+                        <h3>待办事项</h3>
+                        <p>管理您的任务清单</p>
+                    </div>
+                </div>
+                <div class="quick-stats">
+                    <div class="stat-card">
+                        <h4>待办任务</h4>
+                        <p class="stat-number" id="todo-count">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>已保存文档</h4>
+                        <p class="stat-number" id="doc-count">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>表格数量</h4>
+                        <p class="stat-number" id="sheet-count">0</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 文档编辑器 -->
+            <section id="document" class="module">
+                <div class="module-header">
+                    <h1>文档编辑器</h1>
+                    <div class="toolbar">
+                        <button onclick="DocumentEditor.execCommand('bold')" title="粗体"><b>B</b></button>
+                        <button onclick="DocumentEditor.execCommand('italic')" title="斜体"><i>I</i></button>
+                        <button onclick="DocumentEditor.execCommand('underline')" title="下划线"><u>U</u></button>
+                        <span class="separator"></span>
+                        <button onclick="DocumentEditor.execCommand('justifyLeft')" title="左对齐">⬅</button>
+                        <button onclick="DocumentEditor.execCommand('justifyCenter')" title="居中">⬌</button>
+                        <button onclick="DocumentEditor.execCommand('justifyRight')" title="右对齐">➡</button>
+                        <span class="separator"></span>
+                        <button onclick="DocumentEditor.execCommand('insertUnorderedList')" title="无序列表">•</button>
+                        <button onclick="DocumentEditor.execCommand('insertOrderedList')" title="有序列表">1.</button>
+                        <span class="separator"></span>
+                        <select onchange="DocumentEditor.execCommand('fontSize', this.value)">
+                            <option value="1">小</option>
+                            <option value="3" selected>中</option>
+                            <option value="5">大</option>
+                            <option value="7">特大</option>
+                        </select>
+                        <select onchange="DocumentEditor.execCommand('fontName', this.value)">
+                            <option value="Arial">Arial</option>
+                            <option value="宋体">宋体</option>
+                            <option value="微软雅黑">微软雅黑</option>
+                            <option value="黑体">黑体</option>
+                        </select>
+                        <input type="color" onchange="DocumentEditor.execCommand('foreColor', this.value)" title="字体颜色">
+                        <span class="separator"></span>
+                        <button onclick="DocumentEditor.save()" title="保存">💾 保存</button>
+                        <button onclick="DocumentEditor.newDoc()" title="新建">📄 新建</button>
+                        <button onclick="DocumentEditor.exportDoc()" title="导出">📤 导出</button>
+                    </div>
+                </div>
+                <div class="document-container">
+                    <div class="doc-sidebar">
+                        <h3>已保存文档</h3>
+                        <div id="doc-list" class="doc-list"></div>
+                    </div>
+                    <div class="editor-wrapper">
+                        <input type="text" id="doc-title" class="doc-title-input" placeholder="文档标题...">
+                        <div id="editor" class="editor" contenteditable="true"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 电子表格 -->
+            <section id="spreadsheet" class="module">
+                <div class="module-header">
+                    <h1>电子表格</h1>
+                    <div class="toolbar">
+                        <button onclick="Spreadsheet.addRow()" title="添加行">➕ 行</button>
+                        <button onclick="Spreadsheet.addColumn()" title="添加列">➕ 列</button>
+                        <button onclick="Spreadsheet.deleteRow()" title="删除行">➖ 行</button>
+                        <button onclick="Spreadsheet.deleteColumn()" title="删除列">➖ 列</button>
+                        <span class="separator"></span>
+                        <button onclick="Spreadsheet.save()" title="保存">💾 保存</button>
+                        <button onclick="Spreadsheet.newSheet()" title="新建">📄 新建</button>
+                        <button onclick="Spreadsheet.exportCSV()" title="导出CSV">📤 CSV</button>
+                        <span class="separator"></span>
+                        <span class="formula-bar">
+                            <label>公式:</label>
+                            <input type="text" id="formula-input" placeholder="输入公式 (如: =SUM(A1:A5))">
+                        </span>
+                    </div>
+                </div>
+                <div class="spreadsheet-container">
+                    <div class="sheet-sidebar">
+                        <h3>已保存表格</h3>
+                        <div id="sheet-list" class="sheet-list"></div>
+                    </div>
+                    <div class="sheet-wrapper">
+                        <input type="text" id="sheet-title" class="sheet-title-input" placeholder="表格标题...">
+                        <div id="spreadsheet-grid" class="spreadsheet-grid"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 待办事项 -->
+            <section id="todo" class="module">
+                <div class="module-header">
+                    <h1>待办事项</h1>
+                </div>
+                <div class="todo-container">
+                    <div class="todo-input-section">
+                        <input type="text" id="todo-input" placeholder="添加新任务..." onkeypress="if(event.key==='Enter')TodoApp.addTask()">
+                        <select id="todo-priority">
+                            <option value="low">低优先级</option>
+                            <option value="medium" selected>中优先级</option>
+                            <option value="high">高优先级</option>
+                        </select>
+                        <input type="date" id="todo-date">
+                        <button onclick="TodoApp.addTask()">添加任务</button>
+                    </div>
+                    <div class="todo-filters">
+                        <button class="filter-btn active" data-filter="all">全部</button>
+                        <button class="filter-btn" data-filter="active">待完成</button>
+                        <button class="filter-btn" data-filter="completed">已完成</button>
+                    </div>
+                    <div id="todo-list" class="todo-list"></div>
+                    <div class="todo-stats">
+                        <span>共 <strong id="total-tasks">0</strong> 个任务</span>
+                        <span>已完成 <strong id="completed-tasks">0</strong> 个</span>
+                        <button onclick="TodoApp.clearCompleted()">清除已完成</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="js/document-editor.js"></script>
+    <script src="js/spreadsheet.js"></script>
+    <script src="js/todo.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

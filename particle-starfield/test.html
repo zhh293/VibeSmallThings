@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>手部追踪测试</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #1a1a1a;
+            color: white;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #00f3ff;
+        }
+        #status {
+            padding: 20px;
+            background: #2a2a2a;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .info {
+            margin: 10px 0;
+            font-size: 18px;
+        }
+        .good {
+            color: #4ade80;
+        }
+        .bad {
+            color: #f87171;
+        }
+        canvas {
+            width: 100%;
+            max-width: 640px;
+            border: 2px solid #00f3ff;
+            border-radius: 10px;
+            display: block;
+            margin: 20px auto;
+        }
+        video {
+            display: none;
+        }
+        #handPos {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            background: #ffd700;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 1000;
+            box-shadow: 0 0 20px #ffd700;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤚 手部追踪测试</h1>
+        <div id="status">
+            <div class="info">摄像头状态: <span id="cameraStatus" class="bad">未启动</span></div>
+            <div class="info">MediaPipe 状态: <span id="mediapipeStatus" class="bad">未加载</span></div>
+            <div class="info">手部检测: <span id="handStatus" class="bad">未检测到</span></div>
+            <div class="info">食指位置: <span id="fingerPos">-</span></div>
+            <div class="info">屏幕坐标: <span id="screenPos">-</span></div>
+        </div>
+
+        <video id="video" autoplay playsinline></video>
+        <canvas id="canvas" width="640" height="480"></canvas>
+
+        <div style="margin-top: 20px; padding: 15px; background: #2a2a2a; border-radius: 10px;">
+            <h3>使用说明：</h3>
+            <ol>
+                <li>确保允许浏览器访问摄像头</li>
+                <li>将手放在摄像头前，手掌面向镜头</li>
+                <li>伸出食指（其他手指可以弯曲）</li>
+                <li>如果检测成功，会看到：
+                    <ul>
+                        <li>画布上显示手部骨架</li>
+                        <li>食指尖端有金色标记</li>
+                        <li>屏幕上有金色圆点跟随食指移动</li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+    </div>
+
+    <div id="handPos"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
+
+    <script>
+        let hands;
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const handPosIndicator = document.getElementById('handPos');
+
+        // 状态元素
+        const cameraStatus = document.getElementById('cameraStatus');
+        const mediapipeStatus = document.getElementById('mediapipeStatus');
+        const handStatus = document.getElementById('handStatus');
+        const fingerPos = document.getElementById('fingerPos');
+        const screenPos = document.getElementById('screenPos');
+
+        async function init() {
+            try {
+                // 启动摄像头
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { width: 640, height: 480, facingMode: 'user' }
+                });
+                video.srcObject = stream;
+
+                await new Promise(resolve => {
+                    video.onloadedmetadata = resolve;
+                });
+
+                cameraStatus.textContent = '✓ 已启动';
+                cameraStatus.className = 'good';
+
+                // 初始化 MediaPipe Hands
+                hands = new Hands({
+                    locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
+                });
+
+                hands.setOptions({
+                    maxNumHands: 1,
+                    modelComplexity: 1,
+                    minDetectionConfidence: 0.5,
+                    minTrackingConfidence: 0.5
+                });
+
+                hands.onResults(onResults);
+
+                mediapipeStatus.textContent = '✓ 已加载';
+                mediapipeStatus.className = 'good';
+
+                // 开始检测
+                detectHands();
+            } catch (error) {
+                console.error('初始化失败:', error);
+                cameraStatus.textContent = '✗ 失败: ' + error.message;
+                cameraStatus.className = 'bad';
+            }
+        }
+
+        async function detectHands() {
+            if (video.readyState === 4) {
+                await hands.send({ image: video });
+            }
+            requestAnimationFrame(detectHands);
+        }
+
+        function onResults(results) {
+            ctx.save();
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 绘制视频（镜像）
+            ctx.scale(-1, 1);
+            ctx.translate(-canvas.width, 0);
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+            if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+                const landmarks = results.multiHandLandmarks[0];
+                const indexTip = landmarks[8];
+
+                handStatus.textContent = '✓ 已检测到';
+                handStatus.className = 'good';
+
+                fingerPos.textContent = `x: ${indexTip.x.toFixed(3)}, y: ${indexTip.y.toFixed(3)}`;
+
+                // 计算屏幕坐标
+                const screenX = (1 - indexTip.x) * window.innerWidth;
+                const screenY = indexTip.y * window.innerHeight;
+                screenPos.textContent = `x: ${screenX.toFixed(0)}px, y: ${screenY.toFixed(0)}px`;
+
+                // 移动指示器
+                handPosIndicator.style.left = screenX + 'px';
+                handPosIndicator.style.top = screenY + 'px';
+
+                // 绘制手部骨架
+                const connections = [
+                    [0, 1], [1, 2], [2, 3], [3, 4],
+                    [0, 5], [5, 6], [6, 7], [7, 8],
+                    [0, 9], [9, 10], [10, 11], [11, 12],
+                    [0, 13], [13, 14], [14, 15], [15, 16],
+                    [0, 17], [17, 18], [18, 19], [19, 20],
+                    [5, 9], [9, 13], [13, 17]
+                ];
+
+                // 绘制连接线
+                ctx.strokeStyle = '#00f3ff';
+                ctx.lineWidth = 2;
+                connections.forEach(([start, end]) => {
+                    const startX = (1 - landmarks[start].x) * canvas.width;
+                    const startY = landmarks[start].y * canvas.height;
+                    const endX = (1 - landmarks[end].x) * canvas.width;
+                    const endY = landmarks[end].y * canvas.height;
+
+                    ctx.beginPath();
+                    ctx.moveTo(startX, startY);
+                    ctx.lineTo(endX, endY);
+                    ctx.stroke();
+                });
+
+                // 绘制关键点
+                landmarks.forEach((landmark, i) => {
+                    const x = (1 - landmark.x) * canvas.width;
+                    const y = landmark.y * canvas.height;
+
+                    ctx.beginPath();
+                    ctx.arc(x, y, i === 8 ? 8 : 4, 0, 2 * Math.PI);
+                    ctx.fillStyle = i === 8 ? '#ffd700' : '#ff006e';
+                    ctx.fill();
+
+                    if (i === 8) {
+                        ctx.fillStyle = '#ffffff';
+                        ctx.font = 'bold 14px Arial';
+                        ctx.fillText('食指', x + 12, y + 5);
+                    }
+                });
+            } else {
+                handStatus.textContent = '✗ 未检测到';
+                handStatus.className = 'bad';
+                fingerPos.textContent = '-';
+                screenPos.textContent = '-';
+            }
+
+            ctx.restore();
+        }
+
+        init();
+    </script>
+</body>
+</html>
