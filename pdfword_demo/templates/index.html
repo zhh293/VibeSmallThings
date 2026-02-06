@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <title>PDF转Word演示</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background-color: #f5f5f7;
+            color: #1d1d1f;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+            font-weight: 600;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            padding: 40px;
+            text-align: center;
+        }
+
+        .upload-area {
+            border: 2px dashed #d2d2d7;
+            border-radius: 8px;
+            padding: 60px 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .upload-area:hover,
+        .upload-area.dragover {
+            border-color: #0071e3;
+            background-color: rgba(0, 113, 227, 0.05);
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            color: #86868b;
+        }
+
+        .upload-text {
+            font-size: 18px;
+            color: #1d1d1f;
+            margin-bottom: 8px;
+        }
+
+        .upload-hint {
+            font-size: 14px;
+            color: #86868b;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .status-area {
+            margin-top: 24px;
+            display: none;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0, 113, 227, 0.3);
+            border-radius: 50%;
+            border-top-color: #0071e3;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .error-msg {
+            color: #ff3b30;
+            margin-top: 10px;
+        }
+
+        .success-msg {
+            color: #34c759;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>PDF 转 Word 工具</h1>
+
+    <div class="container">
+        <div class="upload-area" id="dropZone">
+            <div class="upload-icon">📄</div>
+            <div class="upload-text">点击或拖拽 PDF 文件到这里</div>
+            <div class="upload-hint">支持 .pdf 格式文件</div>
+            <input type="file" id="fileInput" accept=".pdf" name="file">
+        </div>
+
+        <div class="status-area" id="statusArea">
+            <div id="loadingIndicator" style="display:none;">
+                <span class="loading"></span>
+                <span id="statusText">正在转换中，请稍候...</span>
+            </div>
+            <div id="resultMsg"></div>
+        </div>
+    </div>
+
+    <script>
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const statusArea = document.getElementById('statusArea');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const resultMsg = document.getElementById('resultMsg');
+        const statusText = document.getElementById('statusText');
+
+        // 点击触发文件选择
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        // 拖拽事件处理
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight(e) {
+            dropZone.classList.add('dragover');
+        }
+
+        function unhighlight(e) {
+            dropZone.classList.remove('dragover');
+        }
+
+        // 处理文件拖放
+        dropZone.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            handleFiles(files);
+        }
+
+        // 处理文件选择
+        fileInput.addEventListener('change', function () {
+            handleFiles(this.files);
+        });
+
+        function handleFiles(files) {
+            if (files.length > 0) {
+                uploadFile(files[0]);
+            }
+        }
+
+        function uploadFile(file) {
+            if (file.type !== 'application/pdf' && !file.name.endsWith('.pdf')) {
+                showError('请上传 PDF 格式的文件');
+                return;
+            }
+
+            // 重置状态
+            statusArea.style.display = 'block';
+            loadingIndicator.style.display = 'block';
+            resultMsg.innerHTML = '';
+            resultMsg.className = '';
+            statusText.innerText = `正在转换 ${file.name}...`;
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            fetch('/', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => {
+                    if (response.ok) {
+                        // 获取文件名（如果后端有设置 header）
+                        const contentDisposition = response.headers.get('Content-Disposition');
+                        let filename = file.name.replace('.pdf', '.docx');
+                        if (contentDisposition) {
+                            const filenameMatch = contentDisposition.match(/filename="?(.+)"?/);
+                            if (filenameMatch.length === 2)
+                                filename = filenameMatch[1];
+                        }
+                        return response.blob().then(blob => ({ blob, filename }));
+                    } else {
+                        throw new Error('转换失败');
+                    }
+                })
+                .then(({ blob, filename }) => {
+                    // 创建下载链接
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    a.remove();
+
+                    loadingIndicator.style.display = 'none';
+                    showSuccess('转换成功！文件已开始下载。');
+                })
+                .catch(error => {
+                    loadingIndicator.style.display = 'none';
+                    showError('发生错误，请重试。');
+                    console.error(error);
+                });
+        }
+
+        function showError(msg) {
+            resultMsg.innerText = msg;
+            resultMsg.className = 'error-msg';
+        }
+
+        function showSuccess(msg) {
+            resultMsg.innerText = msg;
+            resultMsg.className = 'success-msg';
+        }
+    </script>
+</body>
+
+</html>

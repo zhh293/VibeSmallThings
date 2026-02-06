@@ -1,0 +1,21 @@
+# Custom Python Libs (The "Big File" dependency folder)
+pylibs/
+
+# Conda/Env related (Created earlier)
+conda_pkgs/
+conda_envs/
+
+# Python compiled files
+__pycache__/
+*.pyc
+
+# IDE settings
+.vscode/
+.idea/
+
+# PDF to Word Demo - User Data & Temporary files
+pdfword_demo/uploads/
+pdfword_demo/outputs/
+
+# Mac OS specific
+.DS_Store
