@@ -19,9 +19,8 @@ class AppTheme {
       background: backgroundColor,
       error: errorColor,
     ),
-    textTheme: GoogleFonts.jetbrainsMonoTextTheme(
-      ThemeData.dark().textTheme,
-    ).apply(
+    textTheme: ThemeData.dark().textTheme.apply(
+      fontFamily: GoogleFonts.jetbrainsMono().fontFamily,
       bodyColor: Colors.white,
       displayColor: primaryColor,
     ),
@@ -49,11 +48,16 @@ class AppTheme {
         ),
       ),
     ),
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       color: surfaceColor,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(4), // Tactical/Sharp look
-        side: BorderSide(color: primaryColor.withOpacity(0.3), width: 1),
+        borderRadius: BorderRadius.all(
+          Radius.circular(4),
+        ), // Tactical/Sharp look
+        side: BorderSide(
+          color: Color(0x4DFFD700),
+          width: 1,
+        ), // primaryColor.withOpacity(0.3)
       ),
     ),
   );
