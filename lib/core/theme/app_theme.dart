@@ -20,7 +20,7 @@ class AppTheme {
       error: errorColor,
     ),
     textTheme: ThemeData.dark().textTheme.apply(
-      fontFamily: GoogleFonts.jetbrainsMono().fontFamily,
+      fontFamily: GoogleFonts.jetBrainsMono().fontFamily,
       bodyColor: Colors.white,
       displayColor: primaryColor,
     ),
