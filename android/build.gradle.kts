@@ -29,14 +29,6 @@ subprojects {
     }
 }
 
-subprojects {
-    configurations.all {
-        resolutionStrategy {
-            force("com.arthenica:ffmpeg-kit-min-gpl:6.0")
-        }
-    }
-}
-
 tasks.register<Delete>("clean") {
     delete(rootProject.layout.buildDirectory)
 }
