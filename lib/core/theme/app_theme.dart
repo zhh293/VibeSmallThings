@@ -19,8 +19,9 @@ class AppTheme {
       background: backgroundColor,
       error: errorColor,
     ),
-    textTheme: ThemeData.dark().textTheme.apply(
-      fontFamily: GoogleFonts.jetbrainsMono().fontFamily,
+    textTheme: GoogleFonts.jetbrainsMonoTextTheme(
+      ThemeData.dark().textTheme,
+    ).apply(
       bodyColor: Colors.white,
       displayColor: primaryColor,
     ),
