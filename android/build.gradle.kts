@@ -27,6 +27,13 @@ subprojects {
             }
         }
     }
+    if (project.name == "ffmpeg_kit_flutter_min_gpl") {
+        afterEvaluate {
+            project.extensions.configure<com.android.build.gradle.LibraryExtension> {
+                namespace = "com.arthenica.ffmpegkit.flutter"
+            }
+        }
+    }
 }
 
 tasks.register<Delete>("clean") {
