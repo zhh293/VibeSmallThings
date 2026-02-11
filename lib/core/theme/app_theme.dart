@@ -19,9 +19,11 @@ class AppTheme {
       background: backgroundColor,
       error: errorColor,
     ),
-    textTheme: GoogleFonts.jetbrainsMonoTextTheme(
-      ThemeData.dark().textTheme,
-    ).apply(bodyColor: Colors.white, displayColor: primaryColor),
+    textTheme: ThemeData.dark().textTheme.apply(
+      fontFamily: GoogleFonts.jetbrainsMono().fontFamily,
+      bodyColor: Colors.white,
+      displayColor: primaryColor,
+    ),
     appBarTheme: const AppBarTheme(
       backgroundColor: backgroundColor,
       elevation: 0,
