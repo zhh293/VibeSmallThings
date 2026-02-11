@@ -21,10 +21,7 @@ class AppTheme {
     ),
     textTheme: GoogleFonts.jetbrainsMonoTextTheme(
       ThemeData.dark().textTheme,
-    ).apply(
-      bodyColor: Colors.white,
-      displayColor: primaryColor,
-    ),
+    ).apply(bodyColor: Colors.white, displayColor: primaryColor),
     appBarTheme: const AppBarTheme(
       backgroundColor: backgroundColor,
       elevation: 0,
@@ -52,7 +49,7 @@ class AppTheme {
     cardTheme: CardTheme(
       color: surfaceColor,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(4), // Tactical/Sharp look
         side: BorderSide(color: primaryColor.withOpacity(0.3), width: 1),
       ),
     ),

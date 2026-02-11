@@ -52,7 +52,7 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.encrypted),
+            icon: const Icon(Icons.lock),
             onPressed: () {
               // Show encryption status
             },

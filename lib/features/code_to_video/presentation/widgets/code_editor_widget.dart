@@ -23,7 +23,6 @@ class _CodeEditorWidgetState extends ConsumerState<CodeEditorWidget> {
     _codeController = CodeController(
       text: currentCode,
       language: dart,
-      theme: monokaiSublimeTheme,
     );
 
     _codeController.addListener(() {
