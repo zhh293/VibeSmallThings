@@ -1,0 +1,60 @@
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+class AppTheme {
+  static const Color primaryColor = Color(0xFFFFD700); // Gold/Yellow
+  static const Color backgroundColor = Color(0xFF000000); // Pure Black
+  static const Color surfaceColor = Color(0xFF121212); // Dark Grey
+  static const Color errorColor = Color(0xFFCF6679);
+
+  static final ThemeData darkTheme = ThemeData(
+    useMaterial3: true,
+    brightness: Brightness.dark,
+    scaffoldBackgroundColor: backgroundColor,
+    primaryColor: primaryColor,
+    colorScheme: const ColorScheme.dark(
+      primary: primaryColor,
+      secondary: primaryColor,
+      surface: surfaceColor,
+      background: backgroundColor,
+      error: errorColor,
+    ),
+    textTheme: GoogleFonts.jetbrainsMonoTextTheme(
+      ThemeData.dark().textTheme,
+    ).apply(
+      bodyColor: Colors.white,
+      displayColor: primaryColor,
+    ),
+    appBarTheme: const AppBarTheme(
+      backgroundColor: backgroundColor,
+      elevation: 0,
+      centerTitle: true,
+      titleTextStyle: TextStyle(
+        color: primaryColor,
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+        letterSpacing: 1.5,
+      ),
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: primaryColor,
+        foregroundColor: Colors.black,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(4), // Tactical/Sharp look
+        ),
+        textStyle: const TextStyle(
+          fontWeight: FontWeight.bold,
+          letterSpacing: 1.2,
+        ),
+      ),
+    ),
+    cardTheme: CardTheme(
+      color: surfaceColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+        side: BorderSide(color: primaryColor.withOpacity(0.3), width: 1),
+      ),
+    ),
+  );
+}
