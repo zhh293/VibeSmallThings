@@ -6,7 +6,7 @@ import FlutterMacOS
 import Foundation
 
 import bonsoir_darwin
-import ffmpeg_kit_flutter_min_gpl
+import ffmpeg_kit_flutter_new
 import flutter_blue_plus_darwin
 import isar_flutter_libs
 
