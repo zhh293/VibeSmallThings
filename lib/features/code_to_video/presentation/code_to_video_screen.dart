@@ -61,17 +61,34 @@ class _CodeToVideoScreenState extends ConsumerState<CodeToVideoScreen>
 
       if (mounted) {
         if (outputPath != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Video generated at: $outputPath'),
-              action: SnackBarAction(
-                label: 'OPEN',
-                onPressed: () {
-                  // TODO: Open video
-                },
-              ),
-            ),
-          );
+          try {
+            // Save video to gallery
+            await Gal.putVideo(outputPath);
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Video saved to Gallery successfully!'),
+                  duration: Duration(seconds: 3),
+                ),
+              );
+            }
+          } catch (e) {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    'Saved to temp but failed to save to Gallery: $e',
+                  ),
+                  action: SnackBarAction(
+                    label: 'OPEN',
+                    onPressed: () {
+                      // TODO: Open video
+                    },
+                  ),
+                ),
+              );
+            }
+          }
         } else {
           ScaffoldMessenger.of(
             context,

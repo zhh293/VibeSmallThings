@@ -17,6 +17,11 @@
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
 
+    <!-- Permissions for saving video to Gallery (gal plugin) -->
+    <!-- Devices running Android 9 (API level 28) or lower -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="29" />
+    <!-- Devices running Android 10 (API level 29) or higher do not need this permission for MediaStore -->
+
     <application
         android:label="geek_toolbox"
         android:name="${applicationName}"
