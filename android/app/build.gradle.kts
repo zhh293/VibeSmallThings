@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.geektoolbox.geek_toolbox"
-    compileSdk = 34
+    compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
