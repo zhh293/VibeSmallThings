@@ -28,9 +28,13 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Fix ffmpeg_kit_flutter_new manifest
+      - name: Fix library manifests and build config
         run: |
+          # Remove conflicting package attribute from ffmpeg_kit_flutter_new manifest
           find ~/.pub-cache -name "AndroidManifest.xml" -path "*ffmpeg_kit_flutter_new*" -exec sed -i 's/package="com.antonkarpenko.ffmpegkit"//g' {} +
+          
+          # Force compileSdkVersion 34 for isar_flutter_libs to fix lStar error
+          find ~/.pub-cache -name "build.gradle" -path "*isar_flutter_libs*" -exec sed -i 's/compileSdkVersion .*/compileSdkVersion 34/g' {} +
 
       - name: Build APK
         run: flutter build apk --release

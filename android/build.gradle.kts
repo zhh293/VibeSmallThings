@@ -31,19 +31,6 @@ subprojects {
 }
 
 subprojects {
-    project.pluginManager.withPlugin("com.android.library") {
-        project.extensions.configure<com.android.build.gradle.BaseExtension> {
-            compileSdkVersion(34)
-        }
-    }
-    project.pluginManager.withPlugin("com.android.application") {
-        project.extensions.configure<com.android.build.gradle.BaseExtension> {
-            compileSdkVersion(34)
-        }
-    }
-}
-
-subprojects {
     if (project.name == "isar_flutter_libs") {
         project.pluginManager.withPlugin("com.android.library") {
             project.extensions.configure<com.android.build.gradle.LibraryExtension> {
