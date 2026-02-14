@@ -1,38 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:geek_toolbox/core/theme/app_theme.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:geek_toolbox/features/mesh_messenger/domain/entities/peer.dart';
 import 'package:geek_toolbox/features/mesh_messenger/presentation/chat_screen.dart';
+import 'package:geek_toolbox/features/mesh_messenger/presentation/providers/mesh_provider.dart';
 
-class MeshMessengerScreen extends StatefulWidget {
+class MeshMessengerScreen extends ConsumerStatefulWidget {
   const MeshMessengerScreen({super.key});
 
   @override
-  State<MeshMessengerScreen> createState() => _MeshMessengerScreenState();
+  ConsumerState<MeshMessengerScreen> createState() =>
+      _MeshMessengerScreenState();
 }
 
-class _MeshMessengerScreenState extends State<MeshMessengerScreen> {
+class _MeshMessengerScreenState extends ConsumerState<MeshMessengerScreen> {
   bool _isScanning = true;
-  // Mock peers for UI demo
-  final List<Peer> _mockPeers = [
-    Peer(
-      id: '1',
-      deviceName: 'Survivor_A (BLE)',
-      status: PeerStatus.discovered,
-      type: ConnectionType.ble,
-      lastSeen: DateTime.now(),
-      rssi: -65,
-    ),
-    Peer(
-      id: '2',
-      deviceName: 'Base_Station (WiFi)',
-      status: PeerStatus.connected,
-      type: ConnectionType.wifi,
-      lastSeen: DateTime.now(),
-      rssi: -40,
-    ),
-  ];
+
+  @override
+  void initState() {
+    super.initState();
+    // Auto-start discovery when screen opens
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(meshRepositoryProvider).startDiscovery();
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   void _onPeerTap(Peer peer) {
     Navigator.of(
@@ -42,6 +40,9 @@ class _MeshMessengerScreenState extends State<MeshMessengerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final peersAsync = ref.watch(meshPeersProvider);
+    final peers = peersAsync.value ?? [];
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('MESH RADAR'),
@@ -51,6 +52,11 @@ class _MeshMessengerScreenState extends State<MeshMessengerScreen> {
             onChanged: (val) {
               setState(() {
                 _isScanning = val;
+                if (_isScanning) {
+                  ref.read(meshRepositoryProvider).startDiscovery();
+                } else {
+                  ref.read(meshRepositoryProvider).stopDiscovery();
+                }
               });
             },
             activeColor: AppTheme.primaryColor,
@@ -95,7 +101,7 @@ class _MeshMessengerScreenState extends State<MeshMessengerScreen> {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'NEARBY DEVICES (${_mockPeers.length})',
+                      'NEARBY DEVICES (${peers.length})',
                       style: const TextStyle(
                         color: Colors.grey,
                         fontWeight: FontWeight.bold,
@@ -103,11 +109,12 @@ class _MeshMessengerScreenState extends State<MeshMessengerScreen> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    if (_isScanning && _mockPeers.isEmpty)
+                    if (_isScanning && peers.isEmpty)
                       const Center(child: Text('Scanning for mesh nodes...'))
                     else
-                      ..._mockPeers.map(
+                      ...peers.map(
                         (peer) => ListTile(
+                          onTap: () => _onPeerTap(peer),
                           leading: Icon(
                             peer.type == ConnectionType.ble
                                 ? Icons.bluetooth
@@ -121,22 +128,12 @@ class _MeshMessengerScreenState extends State<MeshMessengerScreen> {
                             style: const TextStyle(color: Colors.white),
                           ),
                           subtitle: Text(
-                            'RSSI: ${peer.rssi} dBm',
-                            style: TextStyle(
-                              color: Colors.grey[600],
-                              fontSize: 12,
-                            ),
+                            'Signal: ${peer.rssi} dBm',
+                            style: TextStyle(color: Colors.grey[600]),
                           ),
-                          trailing: ElevatedButton(
-                            onPressed: () => _onPeerTap(peer),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppTheme.primaryColor,
-                              foregroundColor: Colors.black,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                              ),
-                            ),
-                            child: const Text('CONNECT'),
+                          trailing: Icon(
+                            Icons.chevron_right,
+                            color: Colors.grey[600],
                           ),
                         ),
                       ),
@@ -146,13 +143,6 @@ class _MeshMessengerScreenState extends State<MeshMessengerScreen> {
             },
           ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // TODO: Broadcast SOS
-        },
-        backgroundColor: AppTheme.errorColor,
-        child: const Icon(Icons.sos, color: Colors.white),
       ),
     );
   }
