@@ -47,8 +47,9 @@ class RenderService {
 
       // 2. Encode Video using FFmpeg
       final String outputPath = '${tempDir.path}/output_${DateTime.now().millisecondsSinceEpoch}.mp4';
+      // Use mpeg4 codec as it is more likely to be supported in the default LGPL build of ffmpeg-kit
       final String ffmpegCommand = 
-          '-framerate ${config.fps} -i "$framesDir/frame_%05d.png" -c:v libx264 -pix_fmt yuv420p "$outputPath"';
+          '-framerate ${config.fps} -i "$framesDir/frame_%05d.png" -c:v mpeg4 "$outputPath"';
 
       final session = await FFmpegKit.execute(ffmpegCommand);
       final returnCode = await session.getReturnCode();
@@ -59,12 +60,13 @@ class RenderService {
         await Directory(framesDir).delete(recursive: true);
         return outputPath;
       } else {
-        print('FFmpeg Error: ${await session.getAllLogsAsString()}');
-        return null;
+        final logs = await session.getAllLogsAsString();
+        print('FFmpeg Error: $logs');
+        throw Exception('Render failed: $logs');
       }
     } catch (e) {
       print('Render Error: $e');
-      return null;
+      rethrow;
     }
   }
 
