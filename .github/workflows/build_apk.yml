@@ -28,6 +28,10 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Fix ffmpeg_kit_flutter_new manifest
+        run: |
+          find ~/.pub-cache -name "AndroidManifest.xml" -path "*ffmpeg_kit_flutter_new*" -exec sed -i 's/package="com.antonkarpenko.ffmpegkit"//g' {} +
+
       - name: Build APK
         run: flutter build apk --release
 
