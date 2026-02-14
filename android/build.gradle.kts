@@ -1,9 +1,13 @@
 allprojects {
     repositories {
-        maven { url = uri("https://maven.aliyun.com/repository/google") }
-        maven { url = uri("https://maven.aliyun.com/repository/public") }
+        val isCI = System.getenv("CI") == "true"
+        if (!isCI) {
+            maven { url = uri("https://maven.aliyun.com/repository/google") }
+            maven { url = uri("https://maven.aliyun.com/repository/public") }
+        }
         google()
         mavenCentral()
+        maven { url = uri("https://jitpack.io") }
     }
 }
 
