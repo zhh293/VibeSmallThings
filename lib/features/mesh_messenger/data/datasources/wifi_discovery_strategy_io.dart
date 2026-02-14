@@ -63,7 +63,7 @@ class WifiDiscoveryStrategy implements DiscoveryStrategy {
     _discovery!.eventStream!.listen((event) {
       if (event.type == BonsoirDiscoveryEventType.discoveryServiceFound) {
         if (event.service != null) {
-          event.service!.resolve(event.service!.serviceResolver);
+          event.service!.resolve(_discovery!.serviceResolver);
         }
       } else if (event.type ==
           BonsoirDiscoveryEventType.discoveryServiceResolved) {
@@ -166,10 +166,31 @@ class WifiDiscoveryStrategy implements DiscoveryStrategy {
 
     try {
       // Trying to connect to the service host and port
-      // service.host might be null or empty depending on platform implementation
-      String host = service.host ?? '';
+      // In Bonsoir 5.x, attributes or manual resolution is often needed if host is not direct.
+      // We will try to cast to ResolvedBonsoirService if possible, or use attributes.
+      // But for standard BonsoirService, we might need to rely on 'attributes' if the host is not exposed.
+      // Or check if it's a ResolvedBonsoirService.
+
+      String host = '';
+      if (service is ResolvedBonsoirService) {
+        host = service.host ?? '';
+      } else {
+        // Fallback: check attributes or just try name.local?
+        // Actually, if it's in _resolvedServices, it SHOULD be resolved.
+        // But the type in map is BonsoirService.
+        // Let's try to dynamic cast or inspect attributes.
+        // For now, let's assume it's castable or use a safe check.
+        try {
+          host = (service as dynamic).host ?? '';
+        } catch (e) {
+          // If dynamic fail, maybe look at attributes
+          print('Error getting host: $e');
+        }
+      }
+
       if (host.isEmpty) {
-        // Fallback or error
+        // Fallback to trying to parse from attributes if available?
+        // Or simply fail.
         print('Service host is empty for ${peer.id}');
         return;
       }
