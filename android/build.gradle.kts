@@ -11,6 +11,11 @@ allprojects {
     }
 }
 
+// Force Flutter SDK versions for all plugins
+extra["flutter.compileSdkVersion"] = 34
+extra["flutter.targetSdkVersion"] = 34
+extra["flutter.minSdkVersion"] = 24
+
 val newBuildDir: Directory =
     rootProject.layout.buildDirectory
         .dir("../../build")
